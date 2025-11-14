@@ -87,14 +87,33 @@ public class EmployeeController {
 
     @ApiOperation("员工信息分页查询")
     @GetMapping("/selectPage")
-    public Result<PageInfo> selectPage(EmployeePageQueryDTO employeePageQueryDTO){
+    public Result<PageInfo<Employee>> selectPage(EmployeePageQueryDTO employeePageQueryDTO){
         PageInfo<Employee> employeePageInfo = employeeService.selectPage(employeePageQueryDTO);
         return Result.success(employeePageInfo);
     }
 
-    @GetMapping("/time")
-    public Result getTime() {
-        return Result.success(LocalDateTime.now());
+    @ApiOperation("启用，禁用员工状态")
+    @PostMapping("/status/{status}")
+    public Result startAndStop(@PathVariable("status") Integer status,
+                               @RequestParam("id") Long id){
+        log.info("参数：{}, {}", status, id);
+        employeeService.startAndStop(status, id);
+        return Result.success("修改成功");
+    }
+
+    @ApiOperation("根据id查询员工信息")
+    @GetMapping("/{id}")
+    public Result<Employee> getById(@PathVariable("id") Long id){
+        Employee employee = employeeService.getById(id);
+        return Result.success(employee);
+    }
+
+    @ApiOperation("修改员工信息")
+    @PutMapping
+    public Result update(@RequestBody EmployeeDTO employeeDTO){
+        log.info("参数：{}", employeeDTO);
+        employeeService.update(employeeDTO);
+        return Result.success("修改成功");
     }
 
 }
