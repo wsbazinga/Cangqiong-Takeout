@@ -57,4 +57,42 @@
         </foreach>
     </delete>
 
+    <update id="update" parameterType="com.sky.entity.Dish">
+        UPDATE dish
+        <set>
+            <if test="dish.name != null">
+                name = #{dish.name},
+            </if>
+
+            <if test="dish.categoryId != null">
+                category_id = #{dish.categoryId},
+            </if>
+
+            <if test="dish.price != null">
+                price = #{dish.price},
+            </if>
+
+            <if test="dish.image != null">
+                image = #{dish.image},
+            </if>
+
+            <if test="dish.description != null">
+                description = #{dish.description},
+            </if>
+
+            <if test="dish.status != null">
+                status = #{dish.status},
+            </if>
+
+            <if test="dish.updateTime != null">
+                update_time = #{dish.updateTime},
+            </if>
+
+            <if test="dish.updateUser != null">
+                update_user = #{dish.updateUser},
+            </if>
+        </set>
+        WHERE id = #{dish.id}
+    </update>
+
 </mapper>

@@ -25,6 +25,7 @@ public class DishController {
     private final DishService dishService;
 
     @PostMapping
+    @ApiOperation("新增菜品")
     public Result save(@RequestBody DishDTO dishDTO){
         log.info("新增菜品：{}", dishDTO);
         dishService.saveWithFlavor(dishDTO);
@@ -44,6 +45,20 @@ public class DishController {
     public Result deleteBatch(@RequestParam List<Long> ids){
         dishService.deleteBatch(ids);
         return Result.success("删除成功");
+    }
+
+    @GetMapping("/{id}")
+    @ApiOperation("根据id查询菜品信息")
+    public Result<DishVO> getById(@PathVariable("id") Long id){
+        DishVO dishVO = dishService.getById(id);
+        return Result.success(dishVO);
+    }
+
+    @PutMapping
+    @ApiOperation("修改菜品信息")
+    public Result update(@RequestBody DishDTO dishDTO){
+        dishService.updateWithFlavors(dishDTO);
+        return Result.success("修改成功");
     }
 
 }

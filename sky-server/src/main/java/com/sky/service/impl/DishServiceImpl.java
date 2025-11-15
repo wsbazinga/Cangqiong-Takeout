@@ -16,6 +16,7 @@ import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
+import com.sky.utils.BeanTrimAndNullConvertUtils;
 import com.sky.vo.DishVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -87,5 +88,43 @@ public class DishServiceImpl implements DishService {
         dishMapper.deleteBatch(ids);
         // 删除口味
         dishFlavorMapper.deleteBatchByDishIds(ids);
+    }
+
+    @Override
+    public DishVO getById(Long id) {
+        // 查询菜品信息
+        Dish dish = dishMapper.selectById(id);
+
+        // 查询口味信息
+        List<DishFlavor> dishFlavorList = dishFlavorMapper.selectListByDishId(id);
+
+        // 组装
+        DishVO dishVO = new DishVO();
+        BeanUtils.copyProperties(dish, dishVO);
+        dishVO.setFlavors(dishFlavorList);
+
+        return dishVO;
+    }
+
+    @Override
+    @Transactional
+    public void updateWithFlavors(DishDTO dishDTO) {
+        // 修改菜品信息
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO, dish);
+        BeanTrimAndNullConvertUtils.trimAndConvertEmptyToNull(dish);
+        dishMapper.update(dish);
+
+        // 删除口味信息
+        dishFlavorMapper.deleteBatchByDishId(dishDTO.getId());
+
+        // 新增口味信息
+        List<DishFlavor> flavorList = dishDTO.getFlavors();
+        if(flavorList != null && flavorList.size() > 0){
+            flavorList.forEach(dishFlavor -> {
+                dishFlavor.setDishId(dishDTO.getId());
+            });
+            dishFlavorMapper.saveBatch(flavorList);
+        }
     }
 }
