@@ -95,4 +95,20 @@
         WHERE id = #{dish.id}
     </update>
 
+    <select id="list" resultType="com.sky.entity.Dish" parameterType="com.sky.entity.Dish">
+        select * from dish
+        <where>
+            <if test="dish.categoryId != null">
+                and category_id = #{dish.categoryId}
+            </if>
+            <if test="dish.name != null">
+                and name like cancat('%', #{dish.name} ,'%')
+            </if>
+            <if test="dish.status != null">
+                and status = #{dish.status}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
 </mapper>

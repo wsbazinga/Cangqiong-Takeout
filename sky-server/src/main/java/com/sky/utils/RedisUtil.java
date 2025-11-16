@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -35,6 +36,10 @@ public class RedisUtil {
      */
     public Object get(String key) {
         return redisTemplate.opsForValue().get(key);
+    }
+
+    public Set<String> getKeys(String keysPattern){
+        return redisTemplate.keys(keysPattern);
     }
 
     /**
@@ -141,6 +146,11 @@ public class RedisUtil {
      */
     public Boolean zAdd(String key, Object value, double score) {
         return redisTemplate.opsForZSet().add(key, value, score);
+    }
+
+    public void cleanCache(String pattern){
+        Set<String> keys = getKeys(pattern);
+        delete(keys);
     }
 
 }
